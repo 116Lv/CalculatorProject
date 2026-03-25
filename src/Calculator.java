@@ -4,6 +4,7 @@ import java.util.List;
 public class Calculator {
     private int num1;
     private String oper;
+    private OperatorType ot;
     private int num2;
     private int result;
 
@@ -41,12 +42,46 @@ public class Calculator {
         return result;
     }
 
+    public int calculate(int num1, OperatorType ot, int num2) {
+
+        // 연산자에 따른 계산처리
+        switch(ot) {
+            case ADD:
+                result = num1 + num2;
+                break;
+            case SUB:
+                result = num1 - num2;
+                break;
+            case MUL:
+                result = num1 * num2;
+                break;
+            case DIV:
+                result = num1 / num2;
+                break;
+            default:
+                result = -9999;
+        }
+        if(result != -9999) {
+            Calculator calculator = new Calculator();
+            calculator.setNum1(num1);
+            calculator.setOt(ot);
+            calculator.setNum2(num2);
+            calculator.setResult(result);
+            Lists.add(calculator);
+        }
+        return result;
+    }
+
     public int getNum1() {
         return this.num1;
     }
 
     public String getOper() {
         return this.oper;
+    }
+
+    public OperatorType getOt() {
+        return this.ot;
     }
 
     public int getNum2() {
@@ -63,6 +98,10 @@ public class Calculator {
 
     public void setOper(String oper) {
         this.oper = oper;
+    }
+
+    public void setOt(OperatorType ot) {
+        this.ot = ot;
     }
 
     public void setNum2(int num2) {

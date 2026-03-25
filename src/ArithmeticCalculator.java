@@ -2,17 +2,17 @@ import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
-public class Main {
+public class ArithmeticCalculator {
 
     public static void main(String[] args) {
         // 필요한 변수 & 객체 선언 및 초기화
         int num1 = 0;
         int num2 = 0;
-        String oper = null;
         int result = 0;
         boolean endPoint = false;
         boolean checkPoint = false;
         int continueYn = 0;
+        OperatorType ot = null;
 
         Scanner scanner = new Scanner(System.in);
         Calculator cal = new Calculator();
@@ -41,8 +41,8 @@ public class Main {
             // 연산자 입력
             System.out.print("연산자를 입력해주세요: ");
             do {
-                oper = scanner.next();
-                if(oper.equals("+") || oper.equals("-") || oper.equals("*") || oper.equals("/")) {
+                ot = OperatorType.getSymbol(scanner.next());
+                if(ot != null) {
                     checkPoint = true;
                 } else {
                     System.out.print("연산자가 아닌 입력입니다.\n다시 입력해주세요: ");
@@ -57,7 +57,7 @@ public class Main {
                     num2 = scanner.nextInt();
                     if(num2 < 0) {
                         System.out.print("0 이상의 숫자를 입력해주세요.\n다시 입력해주세요: ");
-                    } else if(num2 == 0 && oper.equals("/")) {
+                    } else if(num2 == 0 && ot == OperatorType.DIV) {
                         System.out.print("나눗셈 연산에서 분모로 0은 입력 될 수 없습니다.\n다시 입력해주세요: ");
                     } else {
                         checkPoint = true;
@@ -70,10 +70,10 @@ public class Main {
             checkPoint = false;
 
             //계산
-            result = cal.calculate(num1, oper, num2);
+            result = cal.calculate(num1, ot, num2);
 
             // 결과 출력
-            System.out.println(num1 + " " + oper + " " + num2 + " = " + result);
+            System.out.println(num1 + " " + ot.getSymbol() + " " + num2 + " = " + result);
 
             // 재계산 여부 확인
             do {
@@ -86,7 +86,7 @@ public class Main {
                             System.out.println("\n=== 계산 기록 ===");
                             List<Calculator> list = cal.getLists();
                             for(Calculator c : list) {
-                                System.out.println(c.getNum1() + " " + c.getOper() + " " + c.getNum2() + " = " + c.getResult());
+                                System.out.println(c.getNum1() + " " + c.getOt().getSymbol() + " " + c.getNum2() + " = " + c.getResult());
                             }
                             System.out.println("=== 끝 ===");
                         } else {
