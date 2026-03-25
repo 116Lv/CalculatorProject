@@ -1,122 +1,91 @@
-import java.util.InputMismatchException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
-public class ArithmeticCalculator {
+public class ArithmeticCalculator<T extends Number> {
+    private T num1;
+    private OperatorType ot;
+    private T num2;
+    private double result;
 
-    public static void main(String[] args) {
-        // 필요한 변수 & 객체 선언 및 초기화
-        int num1 = 0;
-        int num2 = 0;
-        int result = 0;
-        boolean endPoint = false;
-        boolean checkPoint = false;
-        int continueYn = 0;
-        OperatorType ot = null;
+    private ArrayList<ArithmeticCalculator<T>> Lists = new ArrayList<>();
 
-        Scanner scanner = new Scanner(System.in);
-        Calculator cal = new Calculator();
+    public ArithmeticCalculator() {}
 
-        // 계산기 시작
-        do {
-            System.out.println("=== 계산기 시작 ===");
+    public double calculate(T num1, OperatorType ot, T num2) {
 
-            // 1번째 숫자 입력
-            System.out.print("첫번째 숫자를 입력해주세요: ");
-            do {
-                try {
-                    num1 = scanner.nextInt();
-                    if(num1 < 0) {
-                        System.out.print("0 이상의 숫자를 입력해주세요.\n다시 입력해주세요: ");
-                    } else {
-                        checkPoint = true;
-                    }
-                } catch(InputMismatchException e) {
-                    System.out.print("잘못된 입력입니다.\n다시 입력해주세요: ");
-                    scanner.nextLine();
-                }
-            } while(!checkPoint);
-            checkPoint = false;
+        double n1 = num1.doubleValue();
+        double n2 = num2.doubleValue();
 
-            // 연산자 입력
-            System.out.print("연산자를 입력해주세요: ");
-            do {
-                ot = OperatorType.getSymbol(scanner.next());
-                if(ot != null) {
-                    checkPoint = true;
-                } else {
-                    System.out.print("연산자가 아닌 입력입니다.\n다시 입력해주세요: ");
-                }
-            } while(!checkPoint);
-            checkPoint = false;
+        // 연산자에 따른 계산처리
+        switch(ot) {
+            case ADD:
+                result = n1 + n2;
+                break;
+            case SUB:
+                result = n1 - n2;
+                break;
+            case MUL:
+                result = n1 * n2;
+                break;
+            case DIV:
+                result = n1 / n2;
+                break;
+            default:
+                result = -9999;
+        }
+        if(result != -9999) {
+            ArithmeticCalculator<T> calculator = new ArithmeticCalculator<T>();
+            calculator.setNum1(num1);
+            calculator.setOt(ot);
+            calculator.setNum2(num2);
+            calculator.setResult(result);
+            Lists.add(calculator);
+        }
+        return result;
+    }
 
-            // 2번째 숫자 입력
-            System.out.print("두번째 숫자를 입력해주세요: ");
-            do {
-                try {
-                    num2 = scanner.nextInt();
-                    if(num2 < 0) {
-                        System.out.print("0 이상의 숫자를 입력해주세요.\n다시 입력해주세요: ");
-                    } else if(num2 == 0 && ot == OperatorType.DIV) {
-                        System.out.print("나눗셈 연산에서 분모로 0은 입력 될 수 없습니다.\n다시 입력해주세요: ");
-                    } else {
-                        checkPoint = true;
-                    }
-                } catch(InputMismatchException e) {
-                    System.out.print("잘못된 입력입니다.\n다시 입력해주세요: ");
-                    scanner.nextLine();
-                }
-            } while(!checkPoint);
-            checkPoint = false;
+    public T getNum1() {
+        return this.num1;
+    }
 
-            //계산
-            result = cal.calculate(num1, ot, num2);
+    public OperatorType getOt() {
+        return this.ot;
+    }
 
-            // 결과 출력
-            System.out.println(num1 + " " + ot.getSymbol() + " " + num2 + " = " + result);
+    public T getNum2() {
+        return this.num2;
+    }
 
-            // 재계산 여부 확인
-            do {
-                System.out.print("\n다음 메뉴 중 고르세요\n1. 기록조회\n2. 오래된 기록삭제\n3. 다시 계산\n4. 계산기 종료\n입력: ");
-                continueYn = scanner.nextInt();
+    public double getResult() {
+        return this.result;
+    }
 
-                switch (continueYn) {
-                    case 1:
-                        if(!cal.getLists().isEmpty()) {
-                            System.out.println("\n=== 계산 기록 ===");
-                            List<Calculator> list = cal.getLists();
-                            for(Calculator c : list) {
-                                System.out.println(c.getNum1() + " " + c.getOt().getSymbol() + " " + c.getNum2() + " = " + c.getResult());
-                            }
-                            System.out.println("=== 끝 ===");
-                        } else {
-                            System.out.println("현재 작성된 기록이 없습니다.\n");
-                        }
-                        break;
-                    case 2:
-                        cal.removeFirst();
-                        System.out.println("삭제되었습니다.\n");
-                        break;
-                    case 3:
-                        System.out.println("다시 계산합니다.\n");
-                        checkPoint = true;
-                        break;
-                    case 4:
-                        System.out.println("=== 계산기 종료 ===");
-                        endPoint = true;
-                        checkPoint = true;
-                        break;
-                    default:
-                        System.out.println("잘못된 입력입니다.");
-                        break;
-                }
-            } while(!checkPoint);
-            checkPoint = false;
+    public void setNum1(T num1) {
+        this.num1 = num1;
+    }
 
-        } while(!endPoint);
+    public void setOt(OperatorType ot) {
+        this.ot = ot;
+    }
 
-        scanner.close();
+    public void setNum2(T num2) {
+        this.num2 = num2;
+    }
 
+    private void setResult(double result) {
+        this.result = result;
+    }
+
+    public List<ArithmeticCalculator<T>> getLists() {
+        return Lists;
+    }
+
+    public void removeFirst() {
+        if(!Lists.isEmpty()) {
+            Lists.remove(0);
+        }
     }
 
 }
+
+
