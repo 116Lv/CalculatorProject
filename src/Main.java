@@ -1,5 +1,4 @@
 import java.util.InputMismatchException;
-import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -14,9 +13,10 @@ public class Main {
         int continueYn = 0;
         OperatorType ot = null;
         String input;
+        Number searchNum = 0;
 
         Scanner scanner = new Scanner(System.in);
-        ArithmeticCalculator<Number> cal = new ArithmeticCalculator<Number>();
+        ArithmeticCalculator<Number> cal = new ArithmeticCalculator<>();
 
         // 계산기 시작
         do {
@@ -80,31 +80,50 @@ public class Main {
 
             // 재계산 여부 확인
             do {
-                System.out.print("\n다음 메뉴 중 고르세요\n1. 기록조회\n2. 오래된 기록삭제\n3. 다시 계산\n4. 계산기 종료\n입력: ");
+                System.out.print("\n다음 메뉴 중 고르세요\n1. 기록조회\n2. 입력값보다 큰 결과만 조회\n3. 오래된 기록삭제\n4. 다시 계산\n5. 계산기 종료\n입력: ");
                 continueYn = scanner.nextInt();
 
                 switch (continueYn) {
                     case 1:
                         if(!cal.getLists().isEmpty()) {
                             System.out.println("\n=== 계산 기록 ===");
-                            List<ArithmeticCalculator<Number>> list = cal.getLists();
-                            for(ArithmeticCalculator<Number> c : list) {
-                                System.out.println(c.getNum1() + " " + c.getOt().getSymbol() + " " + c.getNum2() + " = " + String.format("%.2f", c.getResult()));
-                            }
+                            cal.getLists().forEach(c -> System.out.println(c.getNum1() + " " + c.getOt().getSymbol() + " " + c.getNum2() + " = " + String.format("%.2f", c.getResult())));
                             System.out.println("=== 끝 ===");
                         } else {
                             System.out.println("현재 작성된 기록이 없습니다.\n");
                         }
                         break;
                     case 2:
+                        if(!cal.getLists().isEmpty()) {
+                            System.out.print("검색 하고싶은 수를 입력하세요: ");
+                            do {
+                                try {
+                                    input = scanner.next();
+                                    searchNum = input.contains(".") ? Double.parseDouble(input) : Integer.parseInt(input);
+                                    Number finalSearchNum = searchNum;
+                                    System.out.println("\n=== 계산 기록 ===");
+                                    cal.getLists().stream().filter(c -> c.getResult() > finalSearchNum.doubleValue()).forEach(c -> System.out.println(c.getNum1() + " " + c.getOt().getSymbol() + " " + c.getNum2() + " = " + String.format("%.2f", c.getResult())));
+                                    System.out.println("=== 끝 ===");
+                                    checkPoint = true;
+                                } catch(NumberFormatException e) {
+                                    System.out.print("잘못된 입력입니다.\n다시 입력해주세요: ");
+                                    scanner.nextLine();
+                                }
+                            } while(!checkPoint);
+                            checkPoint = false;
+                        } else {
+                            System.out.println("현재 작성된 기록이 없습니다.\n");
+                        }
+                        break;
+                    case 3:
                         cal.removeFirst();
                         System.out.println("삭제되었습니다.\n");
                         break;
-                    case 3:
+                    case 4:
                         System.out.println("다시 계산합니다.\n");
                         checkPoint = true;
                         break;
-                    case 4:
+                    case 5:
                         System.out.println("=== 계산기 종료 ===");
                         endPoint = true;
                         checkPoint = true;
